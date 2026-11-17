@@ -86,7 +86,11 @@ python app.py
 ## 專案結構
 
 ```text
-app.py                 Gradio 展示介面
+app.py                 應用程式啟動入口
+showcase.py            Gradio 介面與互動流程
+presentation.py        研究展示內容與概念圖
+ui.css                 視覺設計與響應式版面
+resize.js              隱藏頁籤圖表的響應式尺寸修正
 metrics.py             CSV 驗證、展示指標與圖表
 data/demo_metrics.csv  明確標示的合成示範資料
 docs/                  方法、資料格式與部署說明

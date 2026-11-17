@@ -66,19 +66,35 @@ def render(frame, scenario, metric, source):
     summary = summarize(part)
     field = {"AUROC": "auroc", "Recall / TPR": "tpr", "Specificity / TNR": "tnr"}[metric]
     fig = go.Figure()
-    for model, color in zip(MODELS, ["#94a3b8", "#0d9488"]):
+    for model, color in zip(MODELS, ["#d4d8ca", "#315b49"]):
         data = part[part.model == model].sort_values("group")
         fig.add_bar(name=model, x=data.group, y=data[field], marker_color=color,
                     hovertemplate="%{x}<br>" + metric + ": %{y:.3f}<extra>%{fullData.name}</extra>")
-    fig.update_layout(template="plotly_white", barmode="group", height=380,
-                      title=f"{source}｜{metric}", yaxis=dict(range=[0, 1], title=metric),
-                      legend=dict(orientation="h", y=1.12), margin=dict(l=40,r=20,t=85,b=40))
+    fig.update_layout(template="plotly_white", barmode="group", height=350,
+                      title=dict(text=f"群體效能比較 · {metric.split(' / ')[0]}", font=dict(size=15, color="#202a26"), x=.06, y=.94),
+                      yaxis=dict(range=[0, 1], title=None, gridcolor="#eeeee7", tickfont=dict(size=10, color="#8a9482"), fixedrange=True),
+                      xaxis=dict(tickfont=dict(size=11, color="#5c6b52"), fixedrange=True),
+                      font=dict(family="Arial, Microsoft JhengHei, sans-serif", color="#6c756e"),
+                      legend=dict(orientation="h", x=0, y=1.13, font=dict(size=10)),
+                      margin=dict(l=45,r=25,t=91,b=45), bargap=.45, bargroupgap=.09,
+                      paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", hoverlabel=dict(bgcolor="#243b31", font_color="white"))
     gap = go.Figure()
-    for row, color in zip(summary.values, ["#94a3b8", "#0d9488"]):
+    for row, color in zip(summary.values, ["#d4d8ca", "#b96746"]):
         gap.add_bar(name=row[0], x=["EOpp gap", "EBAcc gap"], y=[row[2], row[3]], marker_color=color)
-    gap.update_layout(template="plotly_white", barmode="group", height=380,
-                      title=f"{source}｜群體落差（越低越好）", yaxis=dict(range=[0, 1]),
-                      legend=dict(orientation="h", y=1.12), margin=dict(l=40,r=20,t=85,b=40))
+    upper = min(1.0, max(.1, math.ceil(max(summary["EOpp gap"].max(), summary["EBAcc gap"].max()) * 1.3 * 20) / 20))
+    gap.update_layout(template="plotly_white", barmode="group", height=350,
+                      title=dict(text="公平性落差 · 越低越好", font=dict(size=15, color="#202a26"), x=.06, y=.94),
+                      yaxis=dict(range=[0, upper], gridcolor="#eeeee7", tickfont=dict(size=10, color="#8a9482"), fixedrange=True),
+                      xaxis=dict(tickfont=dict(size=11, color="#5c6b52"), fixedrange=True),
+                      font=dict(family="Arial, Microsoft JhengHei, sans-serif", color="#6c756e"),
+                      legend=dict(orientation="h", x=0, y=1.13, font=dict(size=10)),
+                      margin=dict(l=45,r=25,t=91,b=45), bargap=.45, bargroupgap=.09,
+                      paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", hoverlabel=dict(bgcolor="#243b31", font_color="white"))
+    # Keep sources in exported charts as well as on the interactive page.
+    for chart in (fig, gap):
+        chart.add_annotation(text="合成示範數據" if source == "合成示範數據" else "使用者匯入 · 未驗證",
+                             xref="paper", yref="paper", x=1, y=1.14, showarrow=False,
+                             xanchor="right", font=dict(size=9, color="#9aa28f"))
     delta = summary.iloc[0, 2] - summary.iloc[1, 2]
     note = (f"**數據來源：{source}** · EOpp gap 變化：{delta * 100:+.1f} 個百分點（正值表示縮小）。\n\n"
             "AUROC 欄位是各群體 AUROC 的算術平均，並非整體 pooled AUROC。"
