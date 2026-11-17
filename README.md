@@ -3,13 +3,13 @@
 # Fairness-aware Contrastive Learning
 ### 公平性數位病理 AI · 專案成果展示
 
-以 Gradio 呈現研究背景、公開成果與群體效能比較。
+以 GitHub Pages 靜態網站呈現研究背景、公開成果與群體效能比較，並保留本機 Gradio 版本。
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
-![Gradio](https://img.shields.io/badge/Gradio-Showcase-F97316)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Static%20Showcase-315B49)
 ![Scope](https://img.shields.io/badge/Scope-Presentation%20Only-0D9488)
 
-[研究來源](https://github.com/hms-dbmi/fairpath) · [方法與範圍](docs/OVERVIEW.md) · [部署說明](docs/DEPLOYMENT.md) · [資料格式](docs/DATA_FORMAT.md)
+[公開成果展示](https://keithwu1017.github.io/fairness-aware-contrastive-learning/) · [研究來源](https://github.com/hms-dbmi/fairpath) · [部署說明](docs/DEPLOYMENT.md) · [資料格式](docs/DATA_FORMAT.md)
 
 </div>
 
@@ -32,7 +32,7 @@
 
 ## 展示功能
 
-![Gradio 成果展示介面](assets/overview.webp)
+![公開成果展示介面](assets/overview.webp)
 
 ![群體效能與公平性互動面板（合成示範數據）](assets/dashboard.webp)
 
@@ -44,7 +44,21 @@
 
 預設資料為**人工合成**，不是病理模型推論，也不對應真實癌種或患者。情境 A 示意群體差距縮小；情境 B 示意公平性改善時可能存在效能取捨。介面不會依影像或人口屬性產生虛構診斷。
 
-## 快速啟動
+## 公開網站
+
+開啟 [FAIR-Path 成果展示](https://keithwu1017.github.io/fairness-aware-contrastive-learning/)，不需安裝 Python、登入 GitHub 或啟動本機伺服器。`site/` 中的 HTML、CSS、JavaScript 與合成資料透過 GitHub Pages 發布。
+
+圖表與 CSV 匯入均在瀏覽器執行；匯入檔案不會傳送至伺服器或 GitHub。重新整理頁面後恢復預設合成資料。公開版與 Gradio 版共用示範資料格式及指標定義。
+
+本機預覽靜態版：
+
+```bash
+python -m http.server 8000 --directory site
+```
+
+開啟 <http://localhost:8000>。不需安裝 `requirements.txt`。
+
+## 本機 Gradio 版（可選）
 
 使用 Python 3.11：
 
@@ -73,19 +87,25 @@ python -m pip install -r requirements.txt
 python app.py
 ```
 
-開啟 <http://127.0.0.1:7860>。預設僅綁定本機，`share=False`。私人儲存庫的 clone 需 GitHub 存取權限。
+開啟 <http://127.0.0.1:7860>。預設僅綁定本機，`share=False`。
 
 ## 展示導覽（約 3 分鐘）
 
-1. 「專案概覽」介紹公平性問題與原研究成果。
-2. 「互動成果面板」切換 Recall，觀察兩模型的群體差距。
+1. 「研究概覽」介紹公平性問題與原研究成果。
+2. 「互動成果」切換 Recall，觀察兩模型的群體差距。
 3. 切至情境 B，再看 AUROC，說明公平性與效能需要共同評估。
 4. 展開指標定義；需要時匯入已授權的自有彙總結果。
-5. 「方法與展示範圍」說明前端與核心研究系統的分工。
+5. 「方法與範圍」說明前端與核心研究系統的分工。
 
 ## 專案結構
 
 ```text
+site/                  GitHub Pages 公開網站（不需後端）
+  index.html           成果介紹與展示頁面
+  app.mjs              瀏覽器圖表、CSV 解析及指標計算
+  style.css            靜態網站版面與響應式控制
+  shared.css           共用展示視覺樣式
+  data/                公開合成示範資料
 app.py                 應用程式啟動入口
 showcase.py            Gradio 介面與互動流程
 presentation.py        研究展示內容與概念圖
@@ -104,10 +124,11 @@ requirements.txt       固定展示依賴版本
 ## 驗證
 
 ```bash
+node --test tests/static.test.mjs
 python -m unittest discover -s tests -v
 ```
 
-GitHub Actions 執行同樣的測試並檢查 Gradio UI 可建立。GitHub 儲存庫承載原始碼，執行中的 Gradio 應用需另行部署；請見 [Docker / Hugging Face Spaces 說明](docs/DEPLOYMENT.md)。
+GitHub Actions 檢查瀏覽器版指標、CSV 驗證及 Gradio UI 建立。`Deploy public showcase` 工作流程只發布 `site/`，不包含 Python 程式與研究核心實作。部署方式見 [說明](docs/DEPLOYMENT.md)。
 
 ## 致謝與授權
 

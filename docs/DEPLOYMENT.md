@@ -1,5 +1,19 @@
 # 部署展示前端
 
+## GitHub Pages（公開展示）
+
+公開網址：[FAIR-Path Showcase](https://keithwu1017.github.io/fairness-aware-contrastive-learning/)。
+
+網站來源為 `site/`，不執行 Python、Gradio 或模型推論。圖表、情境切換、CSV 解析及指標計算全在瀏覽器中執行，不需伺服器或 GPU。訪客匯入的檔案只保留於當前分頁記憶體，重新整理即還原示範資料。
+
+儲存庫的 **Settings → Pages → Source** 設為 **GitHub Actions**。`.github/workflows/pages.yml` 在 `main` 的網站內容更新時，執行 JavaScript 測試並發布 `site/`。也可以從 Actions 手動執行 `Deploy public showcase`。
+
+修改公開頁面時編輯 `site/`，提交後等待該工作流程完成。網站使用相對資源路徑，支援 `/<repository>/` 子目錄及 `#results`、`#methods` 深層連結。
+
+GitHub Free 的 Pages 需要公開儲存庫；GitHub Pro 等方案可支援私人來源。網站發布後可供任何人瀏覽。本專案僅公開展示內容、合成彙總資料與前端程式。
+
+本機靜態預覽：`python -m http.server 8000 --directory site`，開啟 http://localhost:8000。
+
 ## 本機
 
 依 README 安裝 Python 3.11 與依賴後，執行 `python app.py`，開啟 http://127.0.0.1:7860。這是 CPU 展示程式，不需 PyTorch、CUDA 或原研究訓練環境。
@@ -39,4 +53,4 @@ license: agpl-3.0
 4. 設定環境變數 `GRADIO_SERVER_NAME=0.0.0.0`。
 5. 等候建置完成，再確認三個頁籤、情境切換、CSV 匯入及還原功能。
 
-本次交付不包含已建立的 Space 或公開服務網址。GitHub Pages 無法直接執行此 Python Gradio 應用。儲存庫可見性與執行服務的可見性分別管理。
+未建立 Hugging Face Space。GitHub Pages 使用獨立靜態版，Gradio 版則保留供本機或其他 Python 服務平台使用。
